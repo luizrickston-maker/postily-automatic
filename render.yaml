@@ -1,0 +1,41 @@
+# Render Blueprint — alternativa ao Railway
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: postly
+    runtime: docker
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: PUBLIC_URL
+        sync: false   # você define no painel (Render gera um .onrender.com)
+      - key: DATABASE_URL
+        sync: false
+      - key: API_KEY_SECRET
+        sync: false
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: META_REDIRECT_URI
+        sync: false
+      - key: META_GRAPH_VERSION
+        value: v20.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: postly-media
+      - key: SCHEDULER_POLL_MS
+        value: "30000"
+      - key: SCHEDULER_BATCH_SIZE
+        value: "10"
+      - key: SCHEDULER_ENABLED
+        value: "true"
+      - key: LOG_LEVEL
+        value: info
