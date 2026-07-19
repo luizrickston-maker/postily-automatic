@@ -9,8 +9,11 @@ COPY tsconfig*.json ./
 
 RUN npm ci
 
-# Copia source e builda
+# Copia source + scripts (scripts precisam estar disponíveis pro runtime rodar migrate/seed)
 COPY src ./src
+COPY scripts ./scripts
+COPY supabase ./supabase
+
 RUN npm run build
 
 # Stage 2: runtime enxuto
