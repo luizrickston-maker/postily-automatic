@@ -13,8 +13,13 @@ export const pool = new Pool({
   max: 20,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 10_000,
-  // Supabase exige SSL em produção. Em dev local (Postgres sem SSL), não.
-  ssl: isProd ? { rejectUnauthorized: false } : false,
+  // Supabase sempre exige SSL. Postgres local sem SSL funciona.
+  // Detecta Supabase pelo hostname e força SSL habilitado.
+  ssl:
+    config.DATABASE_URL.includes('localhost') ||
+    config.DATABASE_URL.includes('127.0.0.1')
+      ? false
+      : { rejectUnauthorized: false },
 });
 
 pool.on('error', (err: Error) => {
