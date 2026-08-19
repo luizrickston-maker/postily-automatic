@@ -16,7 +16,7 @@ const envSchema = z.object({
 
   META_APP_ID: z.string().optional(),
   META_APP_SECRET: z.string().optional(),
-  META_REDIRECT_URI: z.string().url().optional(),
+  META_REDIRECT_URI: z.string().optional(),
   META_GRAPH_VERSION: z.string().default('v20.0'),
 
   TIKTOK_CLIENT_KEY: z.string().optional(),

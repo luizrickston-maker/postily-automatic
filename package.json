@@ -10,7 +10,9 @@
     "build": "tsc -p tsconfig.build.json",
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:tunnel": "tsx scripts/dev-tunnel.ts",
+    "create:clients": "tsx scripts/create-clients.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/pg": "^8.11.10",
+    "@vercel/node": "^5.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }

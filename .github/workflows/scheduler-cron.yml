@@ -1,0 +1,22 @@
+name: Postly Scheduler
+
+# Chamada a cada minuto para o worker do Postly varrer a fila de posts
+# e disparar os que estão vencidos. Vercel Hobby não permite cron jobs
+# sub-diários, então usamos GitHub Actions (gratuito e ilimitado em repo público).
+on:
+  schedule:
+    - cron: '* * * * *'
+  workflow_dispatch: # permite disparar manualmente pela UI do GitHub
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Disparar scheduler-tick no Postly
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -w "\nHTTP %{http_code}\n" \
+            "${{ secrets.POSTLY_URL }}/api/cron/scheduler-tick"
