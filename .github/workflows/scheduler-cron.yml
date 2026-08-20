@@ -17,6 +17,5 @@ jobs:
         run: |
           curl -sS -X POST \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            -H "Content-Type: application/json" \
             -w "\nHTTP %{http_code}\n" \
             "${{ secrets.POSTLY_URL }}/api/cron/scheduler-tick"
