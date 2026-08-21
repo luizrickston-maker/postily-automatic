@@ -1,28 +1,33 @@
 name: Supabase Keepalive
 
 # Supabase Free tier pausa projetos inativos após 7 dias.
-# Este workflow pinga a REST API do projeto todo dia, evitando a pausa.
+# Este workflow faz queries reais todo dia, evitando a pausa.
+# HTTP 200 conta como atividade. HTTP 401/403 NÃO contam.
 
 on:
   schedule:
-    - cron: '0 12 * * *' # meio-dia UTC todo dia (alternativa: 5x/dia se quiser mais segurança)
+    - cron: '0 12 * * *' # meio-dia UTC todo dia (alternativa: '0 */6 * * *' pra cada 6h)
   workflow_dispatch:
 
 jobs:
-  ping:
+  ping-supabase:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Pingar REST API do Supabase
+      - name: Query real na REST API (conta como atividade)
         run: |
-          echo "Pingando ${{ secrets.SUPABASE_URL }}/rest/v1/"
-          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+          # SELECT count via PostgREST funciona e retorna 200 mesmo em tabela vazia
+          # Endpoint: /rest/v1/<tabela>?select=count&limit=1
+          curl -sS -w "\nHTTP %{http_code}\n" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/"
+            "${{ secrets.SUPABASE_URL }}/rest/v1/tenants?select=count&limit=1"
 
-      - name: Pingar Postly /healthz (bônus)
+  ping-postly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping no Postly /healthz
         run: |
-          echo "Pingando Postly..."
-          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+          curl -sS -w "\nHTTP %{http_code}\n" \
             "${{ secrets.POSTLY_URL }}/healthz"
