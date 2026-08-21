@@ -1,0 +1,28 @@
+name: Supabase Keepalive
+
+# Supabase Free tier pausa projetos inativos após 7 dias.
+# Este workflow pinga a REST API do projeto todo dia, evitando a pausa.
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # meio-dia UTC todo dia (alternativa: 5x/dia se quiser mais segurança)
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Pingar REST API do Supabase
+        run: |
+          echo "Pingando ${{ secrets.SUPABASE_URL }}/rest/v1/"
+          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/"
+
+      - name: Pingar Postly /healthz (bônus)
+        run: |
+          echo "Pingando Postly..."
+          curl -sS -o /dev/null -w "HTTP %{http_code}\n" \
+            "${{ secrets.POSTLY_URL }}/healthz"
